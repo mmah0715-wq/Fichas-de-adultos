@@ -305,7 +305,7 @@
 
 <script>
   /* ── Config ── */
-  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8wqLNnXCDVXpr1oH1IwWwyMxjH86BxMUIAhdEYYtyY8cjuHpQE1ZmyQvjSM_u7rU1kY0QSucJLeS8/pub?output=csv';
+  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ8wqLNnXCDVXpr1oH1IwWwyMxjH86BxMUIAhdEYYtyY8cjuHpQE1ZmyQvjSM_u7rU1kY0QSucJLeS8/pub?output=csv&gid=661235561';
   const CFG_KEY = 'canmma_adultos_v1';
 
   function loadCfg() { try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch(e) { return {}; } }
@@ -396,23 +396,33 @@
       fecha:     col('fecha de nacimiento'),
       edad:      col('edad'),
       grado:     col('grado'),
-      record:    col('récord'),
-      premios:   col('premios canmma'),
+      record:    col('record'),
+      premios:   col('premios canmma 2025'),
       foto:      col('foto'),
       mensual:   col('mensualidad')
+    };
+
+    /* Limpia valores que traen el label repetido dentro del dato,
+       ej: "Grado: BLANCO" → "BLANCO", "Record:1-2" → "1-2" */
+    const stripLabel = (val, ...labels) => {
+      let v = (val || '').trim();
+      for (const lbl of labels) {
+        v = v.replace(new RegExp('^' + lbl + '\\s*:?\\s*', 'i'), '');
+      }
+      return v.trim();
     };
 
     return rows.slice(1)
       .filter(r => r[C.nombre] && r[C.nombre].trim())
       .map(r => ({
-        nombre:    (r[C.nombre]    || '').trim(),
-        fecha:     (r[C.fecha]     || '').trim(),
-        edad:      (r[C.edad]      || '').trim(),
-        grado:     (r[C.grado]     || '').trim(),
-        record:    (r[C.record]    || '').trim(),
-        premios:   (r[C.premios]   || '').trim(),
-        foto:      (r[C.foto]      || '').trim(),
-        mensual:   (r[C.mensual]   || '').trim()
+        nombre:    (r[C.nombre]  || '').trim(),
+        fecha:     (r[C.fecha]   || '').trim(),
+        edad:      (r[C.edad]    || '').trim(),
+        grado:     stripLabel(r[C.grado],   'grado'),
+        record:    stripLabel(r[C.record],  'record', 'récord'),
+        premios:   stripLabel(r[C.premios], 'premios canmma 2025', 'premios canmma'),
+        foto:      (r[C.foto]    || '').trim(),
+        mensual:   (r[C.mensual] || '').trim()
       }));
   }
 
