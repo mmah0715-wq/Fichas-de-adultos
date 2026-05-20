@@ -101,6 +101,13 @@
       text-shadow: 0 0 30px rgba(255,255,255,0.3);
     }
 
+    .apodo {
+      font-family: 'Barlow Condensed', sans-serif; font-style: italic;
+      font-size: clamp(20px, 2.5vw, 38px); font-weight: 700;
+      color: var(--red); margin-top: -2vh; margin-bottom: 2.5vh;
+      letter-spacing: .04em;
+    }
+
     .info-list { display: flex; flex-direction: column; gap: 1.4vh; }
 
     .info-item { font-size: clamp(15px, 1.7vw, 23px); line-height: 1.35; font-weight: 600; }
@@ -393,6 +400,7 @@
 
     const C = {
       nombre:    col('nombre'),
+      apodo:     col('apodo'),
       fecha:     col('fecha de nacimiento'),
       edad:      col('edad'),
       grado:     col('grado'),
@@ -416,6 +424,7 @@
       .filter(r => r[C.nombre] && r[C.nombre].trim())
       .map(r => ({
         nombre:    (r[C.nombre]  || '').trim(),
+        apodo:     (r[C.apodo]   || '').trim(),
         fecha:     (r[C.fecha]   || '').trim(),
         edad:      (r[C.edad]    || '').trim(),
         grado:     stripLabel(r[C.grado],   'grado'),
@@ -504,9 +513,9 @@
     const init = initials(s.nombre);
 
     const items = [];
+    if (s.fecha)     items.push(`<div class="info-item dim">${s.fecha}${s.edad ? ' · ' + s.edad + ' años' : ''}</div>`);
     if (s.grado)     items.push(`<div class="info-item"><b>Grado:</b> ${s.grado}</div>`);
     if (s.record)    items.push(`<div class="info-item"><b>Récord:</b> ${s.record}</div>`);
-    if (s.fecha)     items.push(`<div class="info-item dim">${s.fecha}${s.edad ? ' · ' + s.edad + ' años' : ''}</div>`);
     if (s.mensual) {
       const mensualNum = parseFloat(s.mensual.toString().replace(/[^0-9.\-]/g, ''));
       const mensualClass = (!isNaN(mensualNum) && mensualNum > 0) ? 'val-green' : 'val-red';
@@ -518,6 +527,7 @@
       <div class="card">
         <div class="card-content">
           <h1 class="student-name">${s.nombre}</h1>
+          ${s.apodo ? `<div class="apodo">"${s.apodo}"</div>` : ''}
           <div class="info-list">${items.join('')}</div>
         </div>
         <div class="card-photo-wrap">
